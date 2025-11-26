@@ -87,6 +87,11 @@ Null == CHOOSE x : x \notin Values
 \* Message types
 MsgTypes == {"REQ_R", "REQ_W", "REPLY", "NOTIFY"}
 
+\* Message type for TLC (avoid circular reference)
+Message == [type : MsgTypes, view : View, from : Procs, to : Procs] \cup
+           [type : {"REQ_R", "REQ_W", "REPLY"}, num : Nat, 
+            val : Values \cup {Null}, ts : Timestamp, from : Procs, to : Procs]
+
 -----------------------------------------------------------------------------
 (***************************************************************************
  * Helper Functions
@@ -145,7 +150,7 @@ TypeOK ==
     /\ vMax \in [Procs -> Values \cup {Null}]
     /\ tsMax \in [Procs -> Timestamp]
     /\ pickNewTS \in [Procs -> BOOLEAN]
-    /\ M \in [Procs -> SUBSET msgs]
+    /\ M \in [Procs -> SUBSET Message]  \* Use Message type instead of msgs
     /\ msgNum \in [Procs -> Nat]
     /\ curView \in [Procs -> View]
     /\ pc \in [Procs -> {"idle", "read", "write", "reconfig",

@@ -15,12 +15,8 @@ EXTENDS WeakSnapshot, TLC
  * Model Configuration Constants
  ***************************************************************************)
 
-\* For model checking, we use small constant sets
-\* These are placeholders - actual model values are defined in the .cfg file
-\* MCProcs would be set to something like {p1, p2, p3} in the config
-\* MCValues would be set to something like {v1, v2} in the config
-
-CONSTANTS MCProcs, MCValues
+\* For model checking, we define constraints assuming the WeakSnapshot module
+\* has P and Values set appropriately in the TLC model.
 
 -----------------------------------------------------------------------------
 (***************************************************************************

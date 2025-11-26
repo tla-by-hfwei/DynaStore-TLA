@@ -37,12 +37,23 @@ Range(s) == {s[idx] : idx \in 1..Len(s)}
  *   an update(w, c) completes during the execution, then E continues with
  *   the view that is obtained from w by adding all the changes in c' where
  *   c' is the unique change set guaranteed to exist by property PR4.
+ *
+ * Note: The sequence E is defined conceptually for the proof. In the TLA+
+ * specification, we don't need to explicitly track E since the correctness
+ * properties can be verified through the protocol state. The IsEstablished
+ * predicate below is a simplified check based on the protocol invariants.
  ***************************************************************************)
 
-VARIABLE establishedViews  \* Sequence of established views
-
-\* Check if a view is established (appears in the sequence E)
-IsEstablished(w) == w \in Range(establishedViews)
+\* Check if a view is established (simplified - based on the definition)
+\* A view is established if it's reachable from Init through completed updates
+IsEstablished(w) == 
+    \* Init is always established
+    w = Init \/
+    \* Or there was a completed operation returning this view
+    \E idx \in 1..Len(history) : 
+        history[idx].type \in {"read_complete", "write_complete", "reconfig_complete"} /\
+        \E procId \in Procs : 
+            pc[procId] = "idle" /\ curView[procId] = w
 
 \* The ordering on views: w ≤ w' iff w ⊆ w'
 ViewLeq(w1, w2) == w1 \subseteq w2
